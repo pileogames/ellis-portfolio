@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+    <head>
+        <meta charset="utf-8">
+        <title>Home Page</title>
+        <link rel="stylesheet" href="main.css">
+        
+        <link href="https://fonts.googleapis.com/css?family=Eczar|Lato" rel="stylesheet">
+        
+        <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
+<script src="EllisbannerAd.js"></script>
+<script>
+var canvas, stage, exportRoot, anim_container, dom_overlay_container, fnStartAnimation;
+function init() {
+	canvas = document.getElementById("canvas");
+	anim_container = document.getElementById("animation_container");
+	dom_overlay_container = document.getElementById("dom_overlay_container");
+	images = images||{};
+	ss = ss||{};
+	var loader = new createjs.LoadQueue(false);
+	loader.addEventListener("fileload", handleFileLoad);
+	loader.addEventListener("complete", handleComplete);
+	loader.loadManifest(lib.properties.manifest);
+}
+function handleFileLoad(evt) {	
+	if (evt.item.type == "image") { images[evt.item.id] = evt.result; }	
+}
+function handleComplete(evt) {
+	//This function is always called, irrespective of the content. You can use the variable "stage" after it is created in token create_stage.
+	var queue = evt.target;
+	var ssMetadata = lib.ssMetadata;
+	for(i=0; i<ssMetadata.length; i++) {
+		ss[ssMetadata[i].name] = new createjs.SpriteSheet( {"images": [queue.getResult(ssMetadata[i].name)], "frames": ssMetadata[i].frames} )
+	}
+	exportRoot = new lib.EllisbannerAd();
+	stage = new createjs.Stage(canvas);
+	stage.addChild(exportRoot);	
+	//Registers the "tick" event listener.
+	fnStartAnimation = function() {
+		createjs.Ticker.setFPS(lib.properties.fps);
+		createjs.Ticker.addEventListener("tick", stage);
+	}	    
+	//Code to support hidpi screens and responsive scaling.
+	function makeResponsive(isResp, respDim, isScale, scaleType) {		
+		var lastW, lastH, lastS=1;		
+		window.addEventListener('resize', resizeCanvas);		
+		resizeCanvas();		
+		function resizeCanvas() {			
+			var w = lib.properties.width, h = lib.properties.height;			
+			var iw = window.innerWidth, ih=window.innerHeight;			
+			var pRatio = window.devicePixelRatio || 1, xRatio=iw/w, yRatio=ih/h, sRatio=1;			
+			if(isResp) {                
+				if((respDim=='width'&&lastW==iw) || (respDim=='height'&&lastH==ih)) {                    
+					sRatio = lastS;                
+				}				
+				else if(!isScale) {					
+					if(iw<w || ih<h)						
+						sRatio = Math.min(xRatio, yRatio);				
+				}				
+				else if(scaleType==1) {					
+					sRatio = Math.min(xRatio, yRatio);				
+				}				
+				else if(scaleType==2) {					
+					sRatio = Math.max(xRatio, yRatio);				
+				}			
+			}			
+			canvas.width = w*pRatio*sRatio;			
+			canvas.height = h*pRatio*sRatio;
+			canvas.style.width = dom_overlay_container.style.width = anim_container.style.width =  w*sRatio+'px';				
+			canvas.style.height = anim_container.style.height = dom_overlay_container.style.height = h*sRatio+'px';
+			stage.scaleX = pRatio*sRatio;			
+			stage.scaleY = pRatio*sRatio;			
+			lastW = iw; lastH = ih; lastS = sRatio;		
+		}
+	}
+	makeResponsive(false,'both',false,1);	
+	fnStartAnimation();
+}
+</script>
+        
+    </head>
+    <body onload="init();">
+        
+        <div id="container">
+            
+        <header role="banner">
+            <p><a href="index.html"><img id="bannerLogo" src="images/DemoWebBanner2.jpg" alt="CSS logo" /></a></p>
+            <!-- Image by Marcus Balcher (https://www.flickr.com/photos/celljunkee/), via search.creativecommons.org -->
+            <h1>The Northern Gazette</h1>
+        </header> 
+            
+        <nav id="mainNav" role="navigation">
+            <ul>
+                <li><a id="currentLink" href="index.html">Home</a></li>
+                <li><a href="page2.html">Local News</a></li>
+                <li><a href="page3.html">Weather</a></li>
+                <li><a href="page4.html">Editorials</a></li>
+                <li><a href="page5.html">Personals</a></li>
+            </ul>
+        </nav>
+            
+        <main id="mainContent" role="main">
+        <section>
+            <h2>Local Townsfolk Love Our Paper!</h2>
+            <p><img class="imgWithText" src="images/people-reading_med.jpg" alt="CSS logo" /> Integer vel felis dolor. Vivamus et lectus vitae purus sagittis ultrices. Proin sed leo elit. Donec maximus pulvinar sollicitudin. Aliquam egestas ligula bibendum magna rhoncus, vitae mollis lorem consectetur. Vestibulum faucibus condimentum mauris, tincidunt aliquam felis feugiat non.</p>
+            
+            <!-- Image by David Hodgson (https://www.flickr.com/photos/publicplaces/), via search.creativecommons.org -->
+        </section>
+        <section>
+            <h2>Northern Man Enjoys "Spring-Like" Weather</h2>
+            <p><img class="imgWithText" src="images/coffee-guy.jpg" alt="CSS logo" />Integer vel felis dolor. Vivamus et lectus vitae purus sagittis ultrices. Proin sed leo elit. Donec maximus pulvinar sollicitudin. Aliquam egestas ligula bibendum magna rhoncus, vitae mollis lorem consectetur. Vestibulum faucibus condimentum mauris, tincidunt aliquam felis feugiat non.</p>
+            
+            <!-- Image by David Hodgson (https://www.flickr.com/photos/publicplaces/), via search.creativecommons.org -->
+        </section>
+        <section>
+            <h2>People Gathering About Something Again...</h2>
+            <p><img class="imgWithText" src="images/people-standing.jpg" alt="CSS logo" />Integer vel felis dolor. Vivamus et lectus vitae purus sagittis ultrices. Proin sed leo elit. Donec maximus pulvinar sollicitudin. Aliquam egestas ligula bibendum magna rhoncus, vitae mollis lorem consectetur. Vestibulum faucibus condimentum mauris, tincidunt aliquam felis feugiat non.</p>
+            
+            <!-- Image by David Hodgson (https://www.flickr.com/photos/publicplaces/), via search.creativecommons.org -->
+        </section>
+        </main>
+            
+        <div id="sideBar">
+            <div id="animation_container" style="background-color:rgba(255, 255, 255, 1.00); width:335px; height:280px">
+                <canvas id="canvas" width="335" height="280" style="display: block; background-color:rgba(255, 255, 255, 1.00); margin-top: 20px"></canvas>
+            <div id="dom_overlay_container" style="pointer-events:none; overflow:hidden; width:335px; height:280px; position: absolute; left: 0px; top: 0px; display: block;">
+		</div>
+	</div>
+        <aside>
+            <h3>Mauris sit amet urna metus</h3>
+            <p>Integer vel felis dolor. Vivamus et lectus vitae purus sagittis ultrices. Proin sed leo elit. Donec maximus pulvinar sollicitudin. Aliquam egestas ligula bibendum magna rhoncus, vitae mollis lorem consectetur. Vestibulum faucibus condimentum mauris, tincidunt aliquam felis feugiat non.</p>
+            <h3>Mauris sit amet urna metus</h3>
+            <p>Integer vel felis dolor. Vivamus et lectus vitae purus sagittis ultrices. Proin sed leo elit. Donec maximus pulvinar sollicitudin. Aliquam egestas ligula bibendum magna rhoncus, vitae mollis lorem consectetur. Vestibulum faucibus condimentum mauris, tincidunt aliquam felis feugiat non.</p>
+        </aside>
+                    
+        </div>
+        <footer id="mainFooter" role="contentinfo">
+            <p>&copy; Orion Atkinson 2017    </p>
+        </footer>
+        </div>
+    </body>
+</html>
